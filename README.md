@@ -67,10 +67,16 @@ React (Vite / CRA / Next — your choice). TypeScript welcome, not required. Any
 (plain CSS, Tailwind, MUI). A state/data lib (Redux, Zustand, React Query) is fine but **not**
 required — plain hooks are perfectly acceptable. Keep it clean, not fancy.
 
-## Deliverable
+## Submitting your work
 
-A git repository (link or zip) **with its commit history intact**, plus the README. We look at how
-the work evolved, not just the final state.
+`main` here is a locked, read-only starter — don't work on it. Instead:
+
+1. **Fork this repo** (or clone it and push to a new repo of your own — private is fine).
+2. **Create a new branch** for your work, e.g. `git checkout -b submission`. Do all your commits there.
+3. Commit as you go — **keep your commit history intact.** We look at how the work evolved, not just
+   the final state.
+4. When you're done, send us back your **repo link** (add us as a viewer if it's private) — or a zip —
+   including your README.
 
 ## On using AI
 
