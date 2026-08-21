@@ -1,8 +1,9 @@
 # SafeGauge — React Take-Home: Sensor Portal
 
-**Time budget:** 4–5 hours. We are not looking for a finished product — we want to see how you
-structure a real app: authentication, CRUD against an API, and a live real-time view, with honest
-handling of loading, error, and empty states.
+**Time budget:** 2–3 hours — a timebox, not a deadline. We do **not** expect a finished product; we
+want to see how you code, structure a real app, and make trade-offs under time pressure. Do the core
+slice well and stop — then note in your README what you'd tackle next. The full brief below is
+deliberately larger than 3 hours: it's a menu, not a checklist. Whatever you do not get to is fine — tell us what you would have done next and that counts.
 
 ## Context
 
@@ -21,6 +22,11 @@ the data shapes, and the error contract.
 
 ## What to build
 
+**Core slice — do this first (~2h of the budget):** Auth (§1) → Devices list + create (§2) → the Live dashboard
+(§4) for a selected device. Do these three well and stop; the rest is optional stretch, and leaving it undone costs you nothing. **Alert Rules
+(§3) and applying rules to the live stream (§4, last bullet) are stretch** — reach for them only if
+time allows. We'd far rather see the core done cleanly than all five sections rushed and broken.
+
 ### 1. Auth
 
 - A **login screen**. Credentials: `admin` / `safegauge` (full access) and `viewer` / `readonly`
@@ -36,7 +42,7 @@ the data shapes, and the error contract.
 - Validation errors come back as `422` with a `.body` map of field → message. Show them inline on
   the form, don't just toast a generic error.
 
-### 3. Alert Rules (CRUD)
+### 3. Alert Rules (CRUD) — _stretch_
 
 - For a selected device, list / create / edit / delete alert rules (`Api.rules.*`).
 - A rule = `{ sensorId, op:'>'|'<', threshold, severity:'warn'|'critical' }`.
@@ -47,8 +53,8 @@ the data shapes, and the error contract.
   id, type, latest value + unit, and a "last updated" indication. Tiles update in real time.
 - Surface connection status (`connected` / `reconnecting` / `disconnected`) clearly. Reconnect
   blips happen — handle them gracefully.
-- **Apply the alert rules to the live stream:** highlight any tile whose latest reading breaches a
-  rule the user configured (e.g. `PT-01 > 5000`), coloured by severity.
+- **Apply the alert rules to the live stream _(stretch — pairs with §3)_:** highlight any tile whose
+  latest reading breaches a rule the user configured (e.g. `PT-01 > 5000`), coloured by severity.
 - **No leaks** — unsubscribe listeners and clear timers on unmount / disconnect / device switch.
 
 ### 5. Tests
