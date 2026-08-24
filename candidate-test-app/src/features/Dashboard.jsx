@@ -1,12 +1,16 @@
 import { LogoutButton } from './auth/LogoutButton';
 import { useEffect } from 'react'
 import { useAuth } from './auth/useAuth'
+import { DevicesDashboard } from './devices/DevicesDashboard'
+import './Dashboard.css'
 
 function UserNav ({ session }) {
-    return <nav>
-        {session.user.role}
-        {session.user.username}
-    </nav>
+    return (
+        <nav>
+            Welcome, {session.user.username}!
+            <LogoutButton />
+        </nav>
+    );
 }
 
 export function Dashboard() {
@@ -21,7 +25,8 @@ const { session, handleUserSession } = useAuth()
     return (
         <>
         <UserNav session={session} />
-        <LogoutButton />
+        <DevicesDashboard session={session} />
+
         </>
     )
 }

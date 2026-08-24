@@ -1,14 +1,13 @@
 import { Api } from './mock-api'
 import { retryTransient } from './apiRequest'
 
-export async function login(username, password) {
-        const response = await retryTransient(() => Api.login(username, password))
-        return response
+export function login(username, password) {
+        return retryTransient(() => Api.login(username, password))
 };
 
-export async function me(token) {
-        const response = await retryTransient(() => Api.me(token))
-        return response
+export function me(token) {
+        return  retryTransient(() => Api.me(token))
+         
 };
 
 export function logout(token) {
