@@ -1,0 +1,82 @@
+.devices-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.devices-list {
+    grid-column: 1 / 2;
+    grid-row: 1 / 1;
+}
+
+.individual-device {
+    grid-column: 2 / 3;
+    grid-row: 1 / 1;
+}
+
+.device-form-container {
+    grid-column: 3 / 4;
+    grid-row: 1 / 1;
+}
+
+.device-form fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.device-form .form-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.device-form .form-row label {
+    width: 10rem;
+    flex-shrink: 0;
+    text-align: left;
+}
+
+.device-form .form-row input {
+    flex: 1;
+}
+
+.field-error,
+.form-error {
+    color: #b91c1c;
+}
+
+.device-form input,
+.device-form button {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.device-form button {
+    width: auto;
+    align-self: flex-start;
+}
+
+.sensorhub-dashboard {
+    grid-column: 1 / 4;
+    grid-row: 2 / 3;
+    border-width: 1px 0 1px 0;
+    border-style: solid;
+    border-color: black;
+    padding: 1rem;
+}
+
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.sensor-tile {
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    padding: 0.5rem;
+}
