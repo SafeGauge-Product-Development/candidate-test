@@ -1,17 +1,30 @@
-import { useState } from 'react'
-import { Api } from '../../api/mock-api'
+import { useCallback, useState } from 'react'
+import { logout, me } from '../../api/auth'
 import { AuthContext } from './AuthContext'
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(() => {
-    const saved = localStorage.getItem('session')
-    return saved ? JSON.parse(saved) : null
+    try {
+      return JSON.parse(localStorage.getItem('session'))
+    } catch {
+      return null
+    }
   })
 
   function handleLogin(newSession) {
     localStorage.setItem('session', JSON.stringify(newSession))
     setSession(newSession)
   }
+
+  const handleUserSession = useCallback(async (token) => {
+    try {
+        const user = await me(token)
+        setSession(current => current ? { ...current, user } : current)
+      } catch (error) {
+        console.log('Error fetching user session:', error)
+        if (error.status === 401) handleUnauthorized()
+      }
+  }, [])
 
   function handleUnauthorized() {
     localStorage.removeItem('session')
@@ -21,7 +34,7 @@ export function AuthProvider({ children }) {
   async function handleLogout() {
     if (session?.token) {
       try {
-        await Api.logout(session.token)
+        await logout(session.token)
       } finally {
         handleUnauthorized()
       }
@@ -32,7 +45,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ session, handleLogin, handleUnauthorized, handleLogout }}
+      value={{ session, handleLogin, handleUnauthorized, handleLogout, handleUserSession }}
     >
       {children}
     </AuthContext.Provider>

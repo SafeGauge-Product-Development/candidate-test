@@ -1,5 +1,5 @@
 import { useAuth } from './features/auth/useAuth'
-import { Dashboard } from './features/dashboard'
+import { Dashboard } from './features/Dashboard'
 import LoginPage from './features/auth/LoginPage'
 import './App.css'
 
