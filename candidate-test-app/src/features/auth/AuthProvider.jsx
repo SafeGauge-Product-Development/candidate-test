@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react'
-import { logout, me } from '../../api/auth'
+import { useEffect, useState } from 'react'
+import { logout } from '../../api/auth'
 import { AuthContext } from './AuthContext'
 
 export function AuthProvider({ children }) {
@@ -16,20 +16,15 @@ export function AuthProvider({ children }) {
     setSession(newSession)
   }
 
-  const handleUserSession = useCallback(async (token) => {
-    try {
-        const user = await me(token)
-        setSession(current => current ? { ...current, user } : current)
-      } catch (error) {
-        console.log('Error fetching user session:', error)
-        if (error.status === 401) handleUnauthorized()
-      }
-  }, [])
-
   function handleUnauthorized() {
     localStorage.removeItem('session')
     setSession(null)
   }
+
+  useEffect(() => {
+    window.addEventListener('auth:unauthorized', handleUnauthorized)
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized)
+  }, [])
 
   async function handleLogout() {
     if (session?.token) {
@@ -45,7 +40,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ session, handleLogin, handleUnauthorized, handleLogout, handleUserSession }}
+      value={{ session, handleLogin, handleUnauthorized, handleLogout }}
     >
       {children}
     </AuthContext.Provider>

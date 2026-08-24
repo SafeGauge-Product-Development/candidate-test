@@ -6,7 +6,7 @@ import { AddUpdateDeviceButton } from './AddUpdateDeviceButton'
 import { UserPermissions } from '../auth/UserPermissions'
 
 export function IndividualDevice({ token, id, onUpdated, onRemoved, onEdit }) {
-    const { session, handleUnauthorized } = useAuth();
+    const { session } = useAuth();
     const { isAdmin } = UserPermissions({ session });
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -19,16 +19,11 @@ export function IndividualDevice({ token, id, onUpdated, onRemoved, onEdit }) {
             const device = await getDevice(token, id);
             setDevice(device);
         } catch (error) {
-            console.error('Failed to load device', error);
-            if (error.status === 401) {
-                handleUnauthorized()
-            } else {
-                setError(error.message)
-            }
+            setError(error.message)
         } finally {
             setIsLoading(false)
         }
-    }, [handleUnauthorized, id, token])
+    }, [id, token])
 
     useEffect(() => {
         if (token) Promise.resolve().then(loadDevice)
@@ -38,7 +33,7 @@ export function IndividualDevice({ token, id, onUpdated, onRemoved, onEdit }) {
         <div className="individual-device">
             <h4>Selected Device</h4>
             {isLoading && <p>Loading device...</p>}
-            {error && <p style={{color: 'red'}}>Failed to load device: {error}</p>}
+            {error && <p style={{ color: 'red' }}>Failed to load device: {error}</p>}
             {!isLoading && !error && device && (
                 <div>
                     <p>Device ID: {device.id}</p>
@@ -52,9 +47,14 @@ export function IndividualDevice({ token, id, onUpdated, onRemoved, onEdit }) {
                     />
                     <span title={!isAdmin ? 'User role allows read only' : undefined}>
                         <button disabled={!isAdmin} onClick={async () => {
-                            await removeDevice(token, device.id)
-                            onRemoved?.()
-                            await onUpdated?.()
+                            setError(null)
+                            try {
+                                await removeDevice(token, device.id)
+                                onRemoved?.()
+                                await onUpdated?.()
+                            } catch (error) {
+                                setError(error.message)
+                            }
                         }}>Remove Device</button>
                     </span>
                 </div>

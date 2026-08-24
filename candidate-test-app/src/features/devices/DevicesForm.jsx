@@ -2,12 +2,15 @@ import { useAuth } from '../auth/useAuth';
 import { UserPermissions } from '../auth/UserPermissions'
 import './devices.css';
 import { createDevice, updateDevice } from '../../api/devices';
+import { useState } from 'react';
 
 
 export default function DevicesForm({ mode = 'add', device = null, onCancel, onSuccess }) {
     const { session } = useAuth();
     const { isAdmin } = UserPermissions({ session });
     const isUpdate = mode === 'update';
+    const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -17,45 +20,49 @@ export default function DevicesForm({ mode = 'add', device = null, onCancel, onS
         const sensorCount = Number(form['device-sensor-count'].value)
         const firmwareVersion = form['device-firmware-version'].value.trim()
 
-        if (!name || !site || Number.isNaN(sensorCount) || sensorCount < 1 || sensorCount > 12) {
-            form.reportValidity()
-            return
+        const validationErrors = {};
+        if (!name) validationErrors.name = 'Name is required';
+        if (!site) validationErrors.site = 'Site is required';
+        if (!Number.isInteger(sensorCount) || sensorCount < 1 || sensorCount > 12) {
+            validationErrors.sensorCount = 'Sensor count must be a whole number from 1 to 12';
+        }
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
         }
 
-        if (isUpdate) {
-            try {
+        setErrors({});
+        setIsSubmitting(true);
+        try {
+            if (isUpdate) {
                 await updateDevice(session?.token, device.id, {
                     name,
                     sensorCount,
                     site,
                     firmwareVersion,
                 });
-                await onSuccess?.()
-                onCancel?.()
-            } catch (error) {
-                console.error('Failed to update device', error);
-            }
-        } else {
-            try {
+            } else {
                 await createDevice(session?.token, {
                     name,
                     sensorCount,
                     site,
                     firmwareVersion,
                 });
-                await onSuccess?.()
-                onCancel?.()
-            } catch (error) {
-                console.error('Failed to create device', error);
             }
+            await onSuccess?.();
+            onCancel?.();
+        } catch (error) {
+            setErrors(error.status === 422 ? error.body : { form: error.message });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
         <div className="device-form-container">
             <h4>{isUpdate ? 'Update Form' : 'Create Form'}</h4>
-            <form onSubmit={handleSubmit} className="device-form">
-                <fieldset disabled={!isAdmin}> 
+            <form noValidate onSubmit={handleSubmit} className="device-form">
+                <fieldset disabled={!isAdmin || isSubmitting}>
                     {isUpdate && (
                         <div className="form-row">
                             <label htmlFor="device-id">Device ID:</label>
@@ -64,15 +71,18 @@ export default function DevicesForm({ mode = 'add', device = null, onCancel, onS
                     )}
                     <div className="form-row">
                         <label htmlFor="device-name">Device Name:</label>
-                        <input id="device-name" type="text" placeholder="Device Name" defaultValue={isUpdate ? device?.name || '' : ''} required />
+                        <input id="device-name" type="text" placeholder="Device Name" defaultValue={isUpdate ? device?.name || '' : ''} />
+                        {errors.name && <span className="field-error">{errors.name}</span>}
                     </div>
                     <div className="form-row">
                         <label htmlFor="device-sensor-count">Sensor Count:</label>
-                        <input id="device-sensor-count" type="number" placeholder="Sensor Count" defaultValue={isUpdate ? device?.sensorCount || '' : ''} min="1" max="12" required />
+                        <input id="device-sensor-count" type="number" placeholder="Sensor Count" defaultValue={isUpdate ? device?.sensorCount || '' : ''} />
+                        {errors.sensorCount && <span className="field-error">{errors.sensorCount}</span>}
                     </div>
                     <div className="form-row">
                         <label htmlFor="device-site">Site:</label>
-                        <input id="device-site" type="text" placeholder="Site" defaultValue={isUpdate ? device?.site || '' : ''} required />
+                        <input id="device-site" type="text" placeholder="Site" defaultValue={isUpdate ? device?.site || '' : ''} />
+                        {errors.site && <span className="field-error">{errors.site}</span>}
                     </div>
                     <div className="form-row">
                         <label htmlFor="device-firmware-version">Firmware Version:</label>
@@ -85,9 +95,10 @@ export default function DevicesForm({ mode = 'add', device = null, onCancel, onS
                         </div>
                     )}
                     <div className="form-row">
-                        <button type="submit">Submit</button>
+                        <button type="submit">{isSubmitting ? 'Saving...' : 'Submit'}</button>
                         <button type="button" onClick={onCancel}>Cancel</button>
                     </div>
+                    {errors.form && <p className="form-error">{errors.form}</p>}
                 </fieldset>
             </form>
         </div>

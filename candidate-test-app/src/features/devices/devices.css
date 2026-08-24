@@ -44,6 +44,11 @@
     flex: 1;
 }
 
+.field-error,
+.form-error {
+    color: #b91c1c;
+}
+
 .device-form input,
 .device-form button {
     width: 100%;
@@ -58,6 +63,10 @@
 .sensorhub-dashboard {
     grid-column: 1 / 4;
     grid-row: 2 / 3;
+    border-width: 1px 0 1px 0;
+    border-style: solid;
+    border-color: black;
+    padding: 1rem;
 }
 
 .sensor-grid {
