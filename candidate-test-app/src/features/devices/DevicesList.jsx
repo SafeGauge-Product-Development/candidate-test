@@ -1,15 +1,14 @@
 import { getAllDevices } from '../../api/devices'
 import { useAuth } from '../auth/useAuth'
 import { useCallback, useEffect, useState } from 'react'
-import { IndividualDevice } from './IndividualDevice';
+import { AddUpdateDeviceButton } from './AddUpdateDeviceButton'
 
-export function DevicesList({ refreshSignal = 0 }) {
+export function DevicesList({ refreshSignal = 0, onSelectDevice, onAddDevice }) {
     const { session, handleUnauthorized } = useAuth();
     const token = session?.token;
     const [devices, setDevices] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedDevice, setSelectedDevice] = useState(null);
 
     const loadDevices = useCallback(async () => {
         setIsLoading(true)
@@ -33,23 +32,19 @@ export function DevicesList({ refreshSignal = 0 }) {
         if (token) Promise.resolve().then(loadDevices)
     }, [loadDevices, refreshSignal, token])
 
-    return <>
-    {isLoading && <p>Loading devices...</p>}
-    {error && <p style={{color: 'red'}}>Failed to load devices: {error}</p>}
-    {!isLoading && !error && devices.map(device => (
-        <div key={device.id}>
-            <li onClick={() => setSelectedDevice(device)}>{device.name}, {device.sensorCount}, {device.site}
-            </li>
+    return (
+        <div className="devices-list">
+            <h4>Devices List</h4>
+            {isLoading && <p>Loading devices...</p>}
+            {error && <p style={{color: 'red'}}>Failed to load devices: {error}</p>}
+            {!isLoading && !error && devices.map(device => (
+                <div key={device.id}>
+                    <li onClick={() => onSelectDevice?.(device.id)}>{device.name}, {device.sensorCount}, {device.site}
+                    </li>
+                </div>
+            ))} 
+            <button onClick={loadDevices} disabled={isLoading}>Reload Devices</button>
+            <AddUpdateDeviceButton mode="add" onAdd={onAddDevice} />
         </div>
-    ))} 
-    <button onClick={loadDevices} disabled={isLoading}>Reload Devices</button>
-    {selectedDevice && (
-        <IndividualDevice
-            token={token}
-            id={selectedDevice.id}
-            onUpdated={loadDevices}
-            onRemoved={() => setSelectedDevice(null)}
-        />
-    )}
-    </>
+    )
 }

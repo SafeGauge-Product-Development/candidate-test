@@ -1,3 +1,20 @@
+.devices-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+}
+
+.devices-list {
+    grid-column: 1 / 2;
+}
+
+.individual-device {
+    grid-column: 2 / 3;
+}
+
+.device-form-container {
+    grid-column: 3 / 4;
+}
+
 .device-form fieldset {
     display: flex;
     flex-direction: column;

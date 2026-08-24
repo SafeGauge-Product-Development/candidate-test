@@ -52,8 +52,8 @@ export default function DevicesForm({ mode = 'add', device = null, onCancel, onS
     };
 
     return (
-        <>
-            <h2>{isUpdate ? 'Update Form' : 'Create Form'}</h2>
+        <div className="device-form-container">
+            <h4>{isUpdate ? 'Update Form' : 'Create Form'}</h4>
             <form onSubmit={handleSubmit} className="device-form">
                 <fieldset disabled={!isAdmin}> 
                     {isUpdate && (
@@ -90,6 +90,6 @@ export default function DevicesForm({ mode = 'add', device = null, onCancel, onS
                     </div>
                 </fieldset>
             </form>
-        </>
+        </div>
     );
 }

@@ -1,22 +1,58 @@
 import DevicesForm from './DevicesForm'
 import { DevicesList } from './DevicesList'
 import { useState } from 'react'
-import { AddUpdateDeviceButton } from './AddUpdateDeviceButton'
+import { IndividualDevice } from './IndividualDevice'
 
 export function DevicesDashboard({ session }) {  
-    const [showForm, setShowForm] = useState(false)
+    const [showCreateForm, setShowCreateForm] = useState(false)
+    const [deviceToEdit, setDeviceToEdit] = useState(null)
     const [refreshSignal, setRefreshSignal] = useState(0)
+    const [selectedDeviceId, setSelectedDeviceId] = useState(null)
 
     return (
-        <>
-            <DevicesList token={session?.token} refreshSignal={refreshSignal} />
-            <AddUpdateDeviceButton mode="add" onAdd={() => setShowForm(true)} />
-            {showForm && (
+        <div className="devices-dashboard">
+            <DevicesList
+                token={session?.token}
+                refreshSignal={refreshSignal}
+                onSelectDevice={setSelectedDeviceId}
+                onAddDevice={() => {
+                    setDeviceToEdit(null)
+                    setShowCreateForm(true)
+                }}
+            />
+            {selectedDeviceId && (
+                <IndividualDevice
+                    token={session?.token}
+                    id={selectedDeviceId}
+                    onEdit={(device) => {
+                        setShowCreateForm(false)
+                        setDeviceToEdit(device)
+                    }}
+                    onUpdated={() => setRefreshSignal(current => current + 1)}
+                    onRemoved={() => {
+                        setSelectedDeviceId(null)
+                        setDeviceToEdit(null)
+                        setRefreshSignal(current => current + 1)
+                    }}
+                />
+            )}
+            {showCreateForm && (
                 <DevicesForm
-                    onCancel={() => setShowForm(false)}
+                    onCancel={() => setShowCreateForm(false)}
                     onSuccess={() => setRefreshSignal(current => current + 1)}
                 />
             )}
-        </>
+            {deviceToEdit && (
+                <DevicesForm
+                    mode="update"
+                    device={deviceToEdit}
+                    onCancel={() => setDeviceToEdit(null)}
+                    onSuccess={() => {
+                        setRefreshSignal(current => current + 1)
+                        setDeviceToEdit(null)
+                    }}
+                />
+            )}
+        </div>
     )
 }
