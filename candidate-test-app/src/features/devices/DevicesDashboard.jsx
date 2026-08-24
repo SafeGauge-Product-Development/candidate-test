@@ -2,6 +2,7 @@ import DevicesForm from './DevicesForm'
 import { DevicesList } from './DevicesList'
 import { useState } from 'react'
 import { IndividualDevice } from './IndividualDevice'
+import { SensorhubDashboard } from './sensorhub/SensorhubDashboard'
 
 export function DevicesDashboard({ session }) {  
     const [showCreateForm, setShowCreateForm] = useState(false)
@@ -51,6 +52,13 @@ export function DevicesDashboard({ session }) {
                         setRefreshSignal(current => current + 1)
                         setDeviceToEdit(null)
                     }}
+                />
+            )}
+            {selectedDeviceId && (
+                <SensorhubDashboard
+                    key={selectedDeviceId}
+                    token={session?.token}
+                    selectedDeviceId={selectedDeviceId}
                 />
             )}
         </div>

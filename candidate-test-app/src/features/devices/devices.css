@@ -1,18 +1,22 @@
 .devices-dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
 }
 
 .devices-list {
     grid-column: 1 / 2;
+    grid-row: 1 / 1;
 }
 
 .individual-device {
     grid-column: 2 / 3;
+    grid-row: 1 / 1;
 }
 
 .device-form-container {
     grid-column: 3 / 4;
+    grid-row: 1 / 1;
 }
 
 .device-form fieldset {
@@ -49,4 +53,21 @@
 .device-form button {
     width: auto;
     align-self: flex-start;
+}
+
+.sensorhub-dashboard {
+    grid-column: 1 / 4;
+    grid-row: 2 / 3;
+}
+
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.sensor-tile {
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    padding: 0.5rem;
 }
